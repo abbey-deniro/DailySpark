@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        $(document).ready(function(){
+            $("button[name='category_button']").click(function(){
+                $("button[name='category_button']").removeClass("bg-gray-300").addClass("bg-white");
+                var buttonId = $(this).attr("id");
+                $("#inst").text("Press space or new button to generate new prompt!");
+                $("#inst").removeClass("text-lg").addClass("text-base w-56 ml-12 text-center");
+                $(this).removeClass("bg-white").addClass("bg-gray-300"); // Change button color to red
+                $.ajax({
+                    type: 'POST',
+                    url: '/render_prompts',
+                    data: { buttonId: buttonId },
+                    success: function(response) {
+                        $("#prompt").text(response.prompt);
+                    }
+                });
+            });
+        });
+
+        $(document).keydown(function(event){
+        if (event.which === 32) { // Spacebar key
+            event.preventDefault(); // Prevent scrolling the page down when pressing spacebar
+            var buttonId = $(".bg-gray-300").attr("id");
+            $.ajax({
+                    type: 'POST',
+                    url: '/render_prompts',
+                    data: { buttonId: buttonId },
+                    success: function(response) {
+                        $("#prompt").text(response.prompt);
+                    }
+                });
+        }
+    });
+    </script>
+</head>
+<body class="bg-gradient-to-br from-[#D8B5FF] to-[#1EAE98] min-h-screen">
+        <div className="logo" class="h-32 w-64 mx-5">
+            <img src="static\daily-spark-high-resolution-logo-white-transparent.png" class="object-cover pt-5 pl-5" />
+        </div>
+        <div>
+            <p id="inst" class="font-playfair mx-6 text-white text-lg pt-8 pb-4 pl-1">Choose a category to get started!</p>
+        </div>
+        <div class="flex">
+        <div id="buttons" class="flex flex-col w-60 mx-10">
+            <button id="Gratitude" name="category_button" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-56 m-2 font-playfair">Gratitude</button>
+            <button id="Morning" name="category_button" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-56 m-2 font-playfair">Morning</button>
+            <button id="Night" name="category_button" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-56 m-2 font-playfair">Night</button>
+            <button id="ShadowWork" name="category_button" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-56 m-2 font-playfair">Shadow Work</button>
+            <button id="GoalSetting" name="category_button" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-56 m-2 font-playfair">Goal Setting</button>
+            <button id="Relationship" name="category_button" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-56 m-2 font-playfair">Relationship</button>
+            <button id="SelfImprovement" name="category_button" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded shadow w-56 m-2 font-playfair">Self-Improvement</button>
+        </div>
+        <div id="prompt-container" class="flex-grow flex justify-center items-center">
+            <p id="prompt" class="font-playfair w-3/4 text-white text-center text-3xl self-center pb-10"></p>
+        </div>
+    </div>
+    <div class="flex-grow flex justify-center items-center">
+    </div>
+</body>
+</html>
